@@ -11,8 +11,18 @@ OS="$(uname -s)"
 
 if [[ "$OS" == "Darwin" ]]; then
     # macOS
-    DIRS=("ghostty" "nvim")
+    DIRS=("nvim")
     echo "Detected macOS. Syncing: ${DIRS[*]}"
+    
+    # Handle ghostty separately for macOS (different location)
+    if [ -d "$DOTFILES_DIR/ghostty" ]; then
+        GHOSTTY_DIR="$HOME/Library/Application Support/com.mitchellh.ghostty"
+        mkdir -p "$GHOSTTY_DIR"
+        echo "Syncing ghostty → $GHOSTTY_DIR/"
+        rsync -av --delete "$DOTFILES_DIR/ghostty/" "$GHOSTTY_DIR/"
+    else
+        echo "Skipping ghostty (not found in dotfiles)"
+    fi
 else
     # Linux (assuming anything not Darwin is Linux for your use case)
     DIRS=("hypr" "ghostty" "waybar" "rofi" "dunst" "nvim")
